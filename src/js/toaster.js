@@ -12,14 +12,18 @@ import $ from 'jquery'
  * ------------------------------------------------------------------------
  */
 
- const NAME               = 'toaster'
- const VERSION            = '0.0.1'
+const NAME               = 'toaster'
+const VERSION            = '0.0.1'
 
 const Default = {
     title   : false,
     content : '<em>No content</em>',
     delay   : 3000,
-    position: 'top right'
+    position: 'top right',
+    containerOption: {},
+    buttonOption: {},
+    headerOption: {},
+    bodyOption: {}
 }
 const DefaultTitle = {
     text    : '',
@@ -71,7 +75,8 @@ class Toaster {
     }
 
     _makeBody(config){
-        return `<div class="toast-body">${config.content}</div>`;
+
+        return `<div class="toast-body  ${config.headerOption.class?config.bodyOption.class:''}" ${config.bodyOption.style?'style="'+config.bodyOption.style+'"':''}>${config.content}</div>`;
     }
 
     _makeContainer(ver, hor){
@@ -91,7 +96,7 @@ class Toaster {
 
         if(typeof config.title === 'string')
             config.title = { text : config.title }
-        
+
         let title = { ...DefaultTitle, ...config.title };
 
         let eImage = '';
@@ -107,12 +112,12 @@ class Toaster {
             : `<small>${title.info}</small>`;
 
         let eClose = !title.close  ? ''
-            : ` <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+            : ` <button type="button" class="ml-2 mb-1 close ${config.buttonOption.class?config.buttonOption.class:''}"  ${config.buttonOption.style?'style="'+config.buttonOption.style+'"':''} data-dismiss="toast" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>`;
 
         return `
-            <div class="toast-header">
+            <div class="toast-header ${config.headerOption.class?config.headerOption.class:''}"  ${config.headerOption.style?'style="'+config.headerOption.style+'"':''}>
                 ${eImage}
                 ${eTitle}
                 ${eInfo}
@@ -126,8 +131,8 @@ class Toaster {
         let body   = this._makeBody(config);
 
         return `
-            <div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-                ${header} ${body}
+            <div class="toast  ${config.containerOption.class?config.containerOption.class:''}" ${config.containerOption.style?'style="'+config.containerOption.style+'"':''} role="alert" aria-live="assertive" aria-atomic="true">
+                ${header}${body}
             </div>`;
     }
 
@@ -138,7 +143,7 @@ class Toaster {
                 opt.title = title;
         }
 
-        const config = { ...Default, ...opt }
+        const config = { ...Default, ...opt };
         const html = this._makeHtml(config)
 
         $(html)
